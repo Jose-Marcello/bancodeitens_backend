@@ -1,73 +1,91 @@
-// Localização: Program.cs
-//using BancoDeItensWebApi.Data;
-//using Microsoft.EntityFrameworkCore;
-// Npgsql; // Necessário para a conversão da URL do Heroku
+// Localização: Program.cs (CÓDIGO FINAL PARA ACA)
+
+using BancoDeItensWebApi.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection; // Necessário para CreateScope
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona serviços ao contêiner.
 builder.Services.AddControllers();
 
-/*NOVA CONFIGURAÇÃO*/
-// === CONFIGURAÇÃO CRÍTICA KESTREL (Adicionar este bloco!) ===
-/*
-var port = Environment.GetEnvironmentVariable("PORT");
-if (!string.IsNullOrEmpty(port) && int.TryParse(port, out int herokuPort))
+// === CONFIGURAÇÃO DO DBCONTEXT (COCKROACHDB/POSTGRESQL) ===
+
+// 1. A Connection String será lida da variável de ambiente AZURE-DB-CONN
+var connectionString = Environment.GetEnvironmentVariable("AZURE-DB-CONN");
+
+if (string.IsNullOrEmpty(connectionString))
 {
-    builder.WebHost.ConfigureKestrel(options =>
+    // Fallback de desenvolvimento (se rodar localmente e não definir a variável)
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    if (string.IsNullOrEmpty(connectionString))
     {
-        // Força o Kestrel a escutar qualquer IP na porta Heroku injetada.
-        options.ListenAnyIP(herokuPort);
-    });
-}
-*/
-
-// === CONFIGURAÇÃO CORRIGIDA DO DBCONTEXT COM POSTGRESQL (SUPORTE HEROKU) ===
-
-// 1. Ler a Connection String no formato URL (DATABASE_URL no appsettings.json)
-/*
-var databaseUrl = builder.Configuration.GetValue<string>("DATABASE_URL");
-string connectionString;
-
-if (!string.IsNullOrEmpty(databaseUrl))
-{
-    // 2. Converter a URL do Heroku (postgres://user:pass@host:port/db) para a string padrão do Npgsql (chave=valor)
-    var uri = new Uri(databaseUrl);
-    var userInfo = uri.UserInfo.Split(':');
-
-    // Npgsql exige uma Connection String no formato chave=valor.
-    connectionString = $"Host={uri.Host};Port={uri.Port};Username={userInfo[0]};Password={userInfo[1]};Database={uri.LocalPath.Substring(1)};Pooling=true;SSL Mode=Prefer;Trust Server Certificate=true";
-}
-else
-{
-    // 3. Fallback: Se DATABASE_URL não existir (ambiente local sem Heroku), tenta ler a DefaultConnection (Se fosse um projeto mais complexo)
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DATABASE_URL' or 'DefaultConnection' not found.");
+        throw new InvalidOperationException("A Connection String não foi encontrada.");
+    }
 }
 
-// 4. Injeção do DbContext
+// 2. Injeção do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
-    options.UseNpgsql(connectionString));
-/*
+{
+    options.UseNpgsql(connectionString,
+        npgsqlOptionsAction: sqlOptions =>
+        {
+            // CORREÇÃO CRÍTICA DO COCKROACHDB: Força a execução sem transações longas
+            sqlOptions.MinBatchSize(1);
 
-// === FIM DA CONFIGURAÇÃO DE DBCONTEXT ===*/
+            // Ativa a retentativa padrão do EF Core (Resolve a falha de conexão temporária)
+            // A linha 41 no seu código
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 10,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                // ADICIONE ESTA LINHA: O C# 8/9+ exige que você defina a lista.
+                errorCodesToAdd: null
+            );
+        })
+        .LogTo(Console.WriteLine, LogLevel.Information); // Útil para logs de startup
+});
+
+// === FIM DA CONFIGURAÇÃO DE DBCONTEXT ===
 
 
-// Configuração do CORS: Permitir que o Front-end Angular (localhost:4200) acesse esta API
+// Configuração do CORS: Permitir que o Front-end Angular acesse esta API
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        policy => policy.WithOrigins("http://localhost:4200") // URL do Angular
+        policy => policy.WithOrigins("http://localhost:4200", "https://orange-mud-08279831e.3.azurestaticapps.net")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
 });
 
-// Adiciona o Swagger/OpenAPI (Opcional, mas útil para testes)
+// Adiciona o Swagger/OpenAPI (Opcional)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Removendo o bloco de migração automática (causa o crash em containers)
+/*
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<BancoDeItensContext>();
+        db.Database.Migrate(); 
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocorreu um erro ao tentar aplicar as migrações.");
+    }
+}
+*/
+
 
 // Configura o pipeline de requisição HTTP.
 if (app.Environment.IsDevelopment())
@@ -76,7 +94,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Comentado para ACA Proxy
 
 // Usa a política de CORS configurada
 app.UseCors("CorsPolicy");
