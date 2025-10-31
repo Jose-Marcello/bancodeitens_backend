@@ -1,11 +1,11 @@
 ﻿// Localização: Program.cs (CÓDIGO FINAL PARA ACA)
 
 using BancoDeItensWebApi.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection; // Necessário para CreateScope
+using Microsoft.Extensions.Logging;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,10 +60,13 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
 
 
 // Configuração do CORS: Permitir que o Front-end Angular acesse esta API
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        policy => policy.WithOrigins("http://localhost:4200", "https://orange-mud-08279831e.3.azurestaticapps.net")
+        policy => policy.WithOrigins("http://localhost:4200",
+                                     "https://icy-stone-049318c1e.3.azurestaticapps.net")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

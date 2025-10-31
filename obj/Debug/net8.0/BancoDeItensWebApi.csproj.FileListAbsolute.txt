@@ -106,3 +106,5 @@ C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\refint\BancoDeItensWeb
 C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.pdb
 C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.genruntimeconfig.cache
 C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\ref\BancoDeItensWebApi.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.sourcelink.json
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
