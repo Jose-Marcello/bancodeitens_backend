@@ -2,7 +2,7 @@
 name: Build e Deploy da API (ACA)
 
 on:
-  push:
+  push: 
     branches:
       - main  # Altere para 'master' se for sua branch principal
     paths:
