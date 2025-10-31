@@ -1,0 +1,56 @@
+# Arquivo: .github/workflows/deploy.yml
+name: Build e Deploy da API (ACA) 
+
+on:
+  push: 
+    branches:
+      - main  # Altere para 'master' se for sua branch principal
+    paths:
+      - 'BancoDeItensWebApi/**' # Roda apenas se houver mudança na pasta do projeto API
+      
+env:
+  # Variáveis de Configuração do Azure
+  AZURE_CONTAINER_REGISTRY: acrbancoitensdev.azurecr.io
+  CONTAINER_IMAGE_NAME: bancodeitenswebapi
+  RESOURCE_GROUP: rg-banco-itens-dev
+  CONTAINER_APP_NAME: app-bancodeitens-api
+  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Checkout do Código
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    # 2. Login no Azure (usando o Segredo AZURE_CREDENTIALS)
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: false # Desativado para CI/CD
+
+    # 3. Build e Push da Imagem para o ACR
+    - name: Docker Build and Push
+      uses: docker/build-push-action@v5
+      with:
+        context: ./BancoDeItensWebApi # <--- Caminho para a pasta que contém o Dockerfile
+        push: true
+        tags: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ github.sha }}
+        # Credenciais do Service Principal
+        username: ${{ secrets.AZURE_CREDENTIALS.clientId }} 
+        password: ${{ secrets.AZURE_CREDENTIALS.clientSecret }}
+        registry: ${{ env.AZURE_CONTAINER_REGISTRY }}
+
+    # 4. Atualizar o Container App (Faz o Redeploy)
+    - name: Update Container App
+      uses: azure/container-apps-deploy-action@v2
+      with:
+        appSourcePath: '' # Vazio pois não está construindo o código aqui
+        acrName: acrbancoitensdev 
+        acrUsername: ${{ secrets.AZURE_CREDENTIALS.clientId }}
+        acrPassword: ${{ secrets.AZURE_CREDENTIALS.clientSecret }}
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
+        imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_IMAGE_NAME }}:${{ github.sha }}
