@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BancoDeItensWebApi.Controllers
 {
-    // A rota /api/[controller] usará o nome da classe, resultando em /api/Questoes
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json")]
     public class QuestoesController : ControllerBase
     {
         private readonly BancoDeItensContext _context; // Usando o seu DbContext: BancoDeItensContext

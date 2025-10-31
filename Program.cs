@@ -1,58 +1,65 @@
-// LocalizaÁ„o: Program.cs (C”DIGO FINAL PARA ACA)
+Ôªø// Localiza√ß√£o: Program.cs (C√ìDIGO FINAL PARA ACA)
 
 using BancoDeItensWebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection; // Necess·rio para CreateScope
+using Microsoft.Extensions.DependencyInjection; // Necess√°rio para CreateScope
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona serviÁos ao contÍiner.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // üõë ADICIONE ESTA LINHA: For√ßa o pipeline a retornar 406 (Not Acceptable)
+    // se o cliente n√£o aceitar um formato dispon√≠vel, prevenindo que retorne HTML.
+    options.ReturnHttpNotAcceptable = true;
 
-// === CONFIGURA«√O DO DBCONTEXT (COCKROACHDB/POSTGRESQL) ===
+    // Adicione a checagem que o ASP.NET Core exige:
+    options.Filters.Add(new ProducesAttribute("application/json"));
+});
 
-// 1. A Connection String ser· lida da vari·vel de ambiente AZURE-DB-CONN
+// === CONFIGURA√á√ÉO DO DBCONTEXT (COCKROACHDB/POSTGRESQL) ===
+
+// 1. A Connection String ser√° lida da vari√°vel de ambiente AZURE-DB-CONN
 var connectionString = Environment.GetEnvironmentVariable("AZURE-DB-CONN");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    // Fallback de desenvolvimento (se rodar localmente e n„o definir a vari·vel)
+    // Fallback de desenvolvimento (se rodar localmente e n√£o definir a vari√°vel)
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
     if (string.IsNullOrEmpty(connectionString))
     {
-        throw new InvalidOperationException("A Connection String n„o foi encontrada.");
+        throw new InvalidOperationException("A Connection String n√£o foi encontrada.");
     }
 }
 
-// 2. InjeÁ„o do DbContext
+// 2. Inje√ß√£o do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
 {
     options.UseNpgsql(connectionString,
         npgsqlOptionsAction: sqlOptions =>
         {
-            // CORRE«√O CRÕTICA DO COCKROACHDB: ForÁa a execuÁ„o sem transaÁıes longas
+            // CORRE√á√ÉO CR√çTICA DO COCKROACHDB: For√ßa a execu√ß√£o sem transa√ß√µes longas
             sqlOptions.MinBatchSize(1);
 
-            // Ativa a retentativa padr„o do EF Core (Resolve a falha de conex„o tempor·ria)
-            // A linha 41 no seu cÛdigo
+            // Ativa a retentativa padr√£o do EF Core (Resolve a falha de conex√£o tempor√°ria)
+            // A linha 41 no seu c√≥digo
             sqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 10,
                 maxRetryDelay: TimeSpan.FromSeconds(30),
-                // ADICIONE ESTA LINHA: O C# 8/9+ exige que vocÍ defina a lista.
+                // ADICIONE ESTA LINHA: O C# 8/9+ exige que voc√™ defina a lista.
                 errorCodesToAdd: null
             );
         })
-        .LogTo(Console.WriteLine, LogLevel.Information); // ⁄til para logs de startup
+        .LogTo(Console.WriteLine, LogLevel.Information); // √ötil para logs de startup
 });
 
-// === FIM DA CONFIGURA«√O DE DBCONTEXT ===
+// === FIM DA CONFIGURA√á√ÉO DE DBCONTEXT ===
 
 
-// ConfiguraÁ„o do CORS: Permitir que o Front-end Angular acesse esta API
+// Configura√ß√£o do CORS: Permitir que o Front-end Angular acesse esta API
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -68,7 +75,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Removendo o bloco de migraÁ„o autom·tica (causa o crash em containers)
+// Removendo o bloco de migra√ß√£o autom√°tica (causa o crash em containers)
 /*
 using (var scope = app.Services.CreateScope())
 {
@@ -81,13 +88,13 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocorreu um erro ao tentar aplicar as migraÁıes.");
+        logger.LogError(ex, "Ocorreu um erro ao tentar aplicar as migra√ß√µes.");
     }
 }
 */
 
 
-// Configura o pipeline de requisiÁ„o HTTP.
+// Configura o pipeline de requisi√ß√£o HTTP.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -96,7 +103,7 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection(); // Comentado para ACA Proxy
 
-// Usa a polÌtica de CORS configurada
+// Usa a pol√≠tica de CORS configurada
 app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
