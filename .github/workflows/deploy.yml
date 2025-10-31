@@ -1,5 +1,5 @@
 # Arquivo: .github/workflows/deploy.yml
-name: Build e Deploy da API (ACA) 
+name: Build e Deploy da API (ACA)  
 
 on:
   push: 
@@ -7,6 +7,7 @@ on:
       - main  # Altere para 'master' se for sua branch principal
     paths:
       - 'BancoDeItensWebApi/**' # Roda apenas se houver mudança na pasta do projeto API
+  workflow_dispatch:
       
 env:
   # Variáveis de Configuração do Azure
