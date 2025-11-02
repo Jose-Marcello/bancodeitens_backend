@@ -7,7 +7,7 @@ COPY ["BancoDeItensV2.sln", "."]
 COPY ["BancoDeItensWebApi/BancoDeItensWebApi.csproj", "BancoDeItensWebApi/"]
 RUN dotnet restore "BancoDeItensWebApi/BancoDeItensWebApi.csproj"
 
-# Copia todos os arquivos do projeto e compila
+# Copia todos os arquivos do projeto e compila 
 COPY . .
 WORKDIR "/src/BancoDeItensWebApi"
 RUN dotnet build "BancoDeItensWebApi.csproj" -c Release -o /app/build
