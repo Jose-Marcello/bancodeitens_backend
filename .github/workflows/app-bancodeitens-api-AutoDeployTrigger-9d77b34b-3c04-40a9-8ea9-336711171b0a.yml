@@ -1,4 +1,4 @@
-name: Trigger auto deployment for app-bancodeitens-api
+name: Trigger auto deployment for app-bancodeitens-api 
 
 # When this action will be executed
 on:
@@ -45,5 +45,6 @@ jobs:
           imageToBuild: acrbancoitensdev.azurecr.io/app-bancodeitens-api:${{ github.sha }}
           _buildArgumentsKey_: |
             _buildArgumentsValues_
+
 
 
