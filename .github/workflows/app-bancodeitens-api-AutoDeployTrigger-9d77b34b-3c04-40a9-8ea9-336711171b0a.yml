@@ -25,7 +25,7 @@ jobs:
           inlineScript: |
             # 1. Compila e constrói a imagem Docker (usando o Dockerfile)
 
-            az acr build --registry acrbancodeitensdev \
+            az acr build --registry acbancodeitensdev \
                          --image app-bancodeitens-api:${{ github.sha }} \
                          --file BancoDeItensWebApi/Dockerfile \
                          --resource-group rg-banco-itens-dev \
@@ -35,5 +35,6 @@ jobs:
             # 2. Faz o Deploy da nova imagem no Azure Container App
             az containerapp update --name app-bancodeitens-api \
                                    --resource-group rg-banco-itens-dev \
-                                   --image acrbancodeitensdev.azurecr.io/app-bancodeitens-api:${{ github.sha }}
+                                   --image acbancodeitensdev.azurecr.io/app-bancodeitens-api:${{ github.sha }}
+
 
