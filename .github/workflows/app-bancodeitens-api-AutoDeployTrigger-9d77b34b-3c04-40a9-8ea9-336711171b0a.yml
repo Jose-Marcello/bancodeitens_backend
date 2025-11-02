@@ -23,6 +23,8 @@ jobs:
         uses: azure/cli@v1
         with:
           inlineScript: |
+            # FORÇA A ASSINATURA CORRETA (PREVINE ERRO DE CONTEXTO)
+            az account set --subscription 9cdc0b73-fe9b-4ad5-bdbe-88061cf97f60
             # 1. Compila e constrói a imagem Docker (usando o Dockerfile)
 
             az acr build --registry acrbancodeitensdev \
@@ -36,6 +38,7 @@ jobs:
             az containerapp update --name app-bancodeitens-api \
                                    --resource-group rg-banco-itens-dev \
                                    --image acrbancodeitensdev.azurecr.io/app-bancodeitens-api:${{ github.sha }}
+
 
 
 
