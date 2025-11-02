@@ -1,0 +1,7 @@
+﻿**/bin/
+**/obj/
+.vs/
+.vscode/
+Dockerfile
+entrypoint.sh
+Procfile
