@@ -12,12 +12,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // === CONFIGURAÇÃO DE SERVIÇOS INICIAIS ===
 
+
+// [BLOCO DE TESTE SIMPLIFICADO]
 // Adiciona o serviço de controladores (MVC/API)
+builder.Services.AddControllers();
+
+// Adiciona o serviço de controladores (MVC/API)
+/*
 builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true;
     options.Filters.Add(new ProducesAttribute("application/json"));
 });
+*/
 
 // Adiciona o Swagger/OpenAPI (Opcional)
 builder.Services.AddEndpointsApiExplorer();
