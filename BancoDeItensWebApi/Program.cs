@@ -71,6 +71,8 @@ var app = builder.Build();
 
 // === AÇÃO FINAL: BLOCO DE APLICAÇÃO DE MIGRAÇÕES NA INICIALIZAÇÃO ===
 // Isso garante que o banco de dados está pronto antes que o app tente consultá-lo.
+
+/*
 try
 {
     using (var scope = app.Services.CreateScope())
@@ -89,7 +91,7 @@ catch (Exception ex)
     logger.LogError(ex, "Um erro ocorreu ao aplicar as migrações do banco de dados no startup do host.");
 }
 // =======================================================================
-
+*/
 
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 if (app.Environment.IsDevelopment())
