@@ -74,6 +74,9 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddHealthChecks();
+
+
 var app = builder.Build();
 
 // === AÇÃO FINAL: BLOCO DE APLICAÇÃO DE MIGRAÇÕES NA INICIALIZAÇÃO ===
@@ -114,7 +117,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-builder.Services.AddHealthChecks();
 
 app.MapHealthChecks("/health");
 
