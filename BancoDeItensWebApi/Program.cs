@@ -113,4 +113,6 @@ app.UseAuthorization();
 // mapControllers precisa ser chamado após UseAuthorization.
 app.MapControllers();
 
+app.MapGet("/health", () => "Healthy");
+
 app.Run();
