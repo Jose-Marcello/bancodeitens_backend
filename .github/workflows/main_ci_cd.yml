@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core app to Azure Container App aca-bancodeitens-v2
+name: Build and deploy .NET Core app to Azure Container App aca-bancodeitens-v3
 
 on:
   push:
@@ -53,7 +53,7 @@ jobs:
 
             # 2. Faz o Deploy da nova imagem no Container App
             # O SP (Service Principal) agora tem permissão Contributor para fazer isso
-            az containerapp update --name aca-bancodeitens-v2 \
+            az containerapp update --name aca-bancodeitens-v3 \
                        --resource-group rg-banco-itens-dev \
                        --image $IMAGE_NAME \
                        --revision-suffix ${{ github.run_number }}
