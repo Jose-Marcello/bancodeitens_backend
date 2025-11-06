@@ -80,6 +80,9 @@ builder.Services.AddHealthChecks().AddDbContextCheck<BancoDeItensContext>();
 
 var app = builder.Build();
 
+
+
+
 // === AÇÃO FINAL: BLOCO DE APLICAÇÃO DE MIGRAÇÕES NA INICIALIZAÇÃO ===
 // Isso garante que o banco de dados está pronto antes que o app tente consultá-lo.
 
@@ -107,7 +110,11 @@ catch (Exception ex)
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwaggerUI(options =>
+
+app.UseRouting();
+app.UseSwagger();
+
+app.UseSwaggerUI(options =>
     {
         // Define que a UI do Swagger deve ser servida na raiz (/)
         // Se você tiver um caminho base no SWA, usaria o nome dele aqui
@@ -115,7 +122,8 @@ catch (Exception ex)
         options.RoutePrefix = string.Empty; // Define que a UI do Swagger está na raiz do domínio (Ex: https://URL_DO_ACA/)
     });
 
-    app.UseSwaggerUI();
+    //app.UseSwaggerUI();
+    
 //}
 
 app.UseCors("CorsPolicy");
