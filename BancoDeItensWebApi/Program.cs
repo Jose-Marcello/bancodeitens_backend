@@ -107,7 +107,14 @@ catch (Exception ex)
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        // Define que a UI do Swagger deve ser servida na raiz (/)
+        // Se você tiver um caminho base no SWA, usaria o nome dele aqui
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Banco de Itens V1");
+        options.RoutePrefix = string.Empty; // Define que a UI do Swagger está na raiz do domínio (Ex: https://URL_DO_ACA/)
+    });
+
     app.UseSwaggerUI();
 }
 
