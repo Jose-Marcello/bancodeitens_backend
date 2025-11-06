@@ -74,7 +74,8 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddHealthChecks();
+//builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks().AddDbContextCheck<BancoDeItensContext>();
 
 
 var app = builder.Build();
