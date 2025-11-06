@@ -105,8 +105,8 @@ catch (Exception ex)
 */
 
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwaggerUI(options =>
     {
         // Define que a UI do Swagger deve ser servida na raiz (/)
@@ -116,7 +116,7 @@ if (app.Environment.IsDevelopment())
     });
 
     app.UseSwaggerUI();
-}
+//}
 
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
