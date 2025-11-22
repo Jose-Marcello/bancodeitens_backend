@@ -37,7 +37,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Define o nome da imagem, usando o novo padrão do PoC
-          IMAGE_NAME="acabolaiteus.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
+          IMAGE_NAME="acabolaitems.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
           
           # COMANDO BUILD DOCKER (Seu Dockerfile deve estar na raiz do repo)
           docker build . --file Dockerfile --tag $IMAGE_NAME
@@ -59,4 +59,5 @@ jobs:
               --name api-bancodeitens-qa \
               --resource-group rg-bolao-aca-prod \
               --image $IMAGE_NAME
+
 
