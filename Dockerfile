@@ -12,8 +12,7 @@ RUN dotnet restore
 COPY . .
 
 # Publica a aplicação
-RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
-
+RUN dotnet publish "BancoDeItensWebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 #------------------------------------------------------------------
 # Estágio 2: Imagem de Produção Final (RUNTIME)
 #------------------------------------------------------------------
