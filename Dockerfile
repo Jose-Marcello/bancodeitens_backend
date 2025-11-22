@@ -19,7 +19,7 @@ RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 #------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-EXPOSE 8080 # Porta definida no ACA Ingress
+EXPOSE 8080 
  
 # Copia os arquivos publicados
 COPY --from=build /app/publish .
