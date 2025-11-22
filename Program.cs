@@ -1,38 +1,41 @@
-﻿// Localização: Program.cs (CÓDIGO FINAL PARA ACA)
+﻿// Localização: Program.cs (CÓDIGO FINAL PARA AZURE SQL DB)
 
 using BancoDeItensWebApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection; // Necessário para CreateScope
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using Microsoft.AspNetCore.Builder; // Necessário para ApplicationBuilder
 
 var builder = WebApplication.CreateBuilder(args);
 
+// === CONFIGURAÇÃO DE SERVIÇOS INICIAIS ===
+
+// 🟢 CORREÇÃO 1: Adiciona o serviço de controladores (MVC/API)
 builder.Services.AddControllers(options =>
 {
-    // 🛑 ADICIONE ESTA LINHA: Força o pipeline a retornar 406 (Not Acceptable)
-    // se o cliente não aceitar um formato disponível, prevenindo que retorne HTML.
     options.ReturnHttpNotAcceptable = true;
-
-    // Adicione a checagem que o ASP.NET Core exige:
     options.Filters.Add(new ProducesAttribute("application/json"));
 });
 
-// === CONFIGURAÇÃO DO DBCONTEXT (COCKROACHDB/POSTGRESQL) ===
+// Adiciona o Swagger/OpenAPI (Opcional)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// 1. A Connection String será lida da variável de ambiente AZURE-DB-CONN
-var connectionString = Environment.GetEnvironmentVariable("AZURE-DB-CONN");
+// 🟢 CORREÇÃO 2: Adiciona o serviço de autorização (necessário para app.UseAuthorization)
+builder.Services.AddAuthorization();
+
+
+// === CONFIGURAÇÃO DO DBCONTEXT (POSTGRESQL) ===
+
+// 1. A Connection String será lida do sistema de configuração (appsettings ou Variáveis do ACA).
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    // Fallback de desenvolvimento (se rodar localmente e não definir a variável)
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new InvalidOperationException("A Connection String não foi encontrada.");
-    }
+    // Se a string não for encontrada, lança exceção.
+    throw new InvalidOperationException("A Connection String 'DefaultConnection' não foi encontrada. Verifique o appsettings.json ou as Variáveis de Ambiente/Segredos do Azure (usando a chave ConnectionStrings__DefaultConnection).");
 }
 
 // 2. Injeção do DbContext
@@ -41,27 +44,55 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
     options.UseNpgsql(connectionString,
         npgsqlOptionsAction: sqlOptions =>
         {
-            // CORREÇÃO CRÍTICA DO COCKROACHDB: Força a execução sem transações longas
-            sqlOptions.MinBatchSize(1);
+            // REMOVIDA: A linha sqlOptions.MinBatchSize(1) (Específica do CockroachDB)
 
-            // Ativa a retentativa padrão do EF Core (Resolve a falha de conexão temporária)
-            // A linha 41 no seu código
+            // Ativa a retentativa padrão (Execution Strategy) para o PostgreSQL
             sqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 10,
                 maxRetryDelay: TimeSpan.FromSeconds(30),
-                // ADICIONE ESTA LINHA: O C# 8/9+ exige que você defina a lista.
-                errorCodesToAdd: null
+                errorCodesToAdd: null // Usa o conjunto padrão de erros transientes do Postgree
             );
         })
-        .LogTo(Console.WriteLine, LogLevel.Information); // Útil para logs de startup
+        .LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 // === FIM DA CONFIGURAÇÃO DE DBCONTEXT ===
 
 
-// Configuração do CORS: Permitir que o Front-end Angular acesse esta API
 
 
+// === CONFIGURAÇÃO DO DBCONTEXT (AZURE SQL SERVER) ===
+/*
+// LER A CONNECTION STRING DIRETAMENTE DA CONFIGURAÇÃO 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Este erro causará o crash-loop se o segredo do ACA não for configurado corretamente.
+    throw new InvalidOperationException("A Connection String 'BancoDeItensDB' não foi encontrada. Verifique as Variáveis de Ambiente/Segredos do Azure.");
+}
+
+// 2. Injeção do DbContext
+/*
+builder.Services.AddDbContext<BancoDeItensContext>(options =>
+{
+    // 🟢 MUDANÇA CRÍTICA: Trocando para UseSqlServer
+    options.UseSqlServer(connectionString,
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            // Ativa a retentativa padrão do EF Core (Resiliência de Rede)
+            // 🛑 CORREÇÃO DA SINTAXE: Removendo o parâmetro errorCodesToAdd problemático
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 10
+               // maxRetryDelay: TimeSpan.FromSeconds(30)
+            );
+        })
+        .LogTo(Console.WriteLine, LogLevel.Information);
+});
+*/
+
+
+// === CONFIGURAÇÃO DO CORS (MANTENHA ATIVO PARA A URL DIRETA) ===
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -72,45 +103,25 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-// Adiciona o Swagger/OpenAPI (Opcional)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Removendo o bloco de migração automática (causa o crash em containers)
-/*
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var db = services.GetRequiredService<BancoDeItensContext>();
-        db.Database.Migrate(); 
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocorreu um erro ao tentar aplicar as migrações.");
-    }
-}
-*/
+// *** IMPORTANTE: BLOCO DE MIGRAÇÃO COMENTADO/REMOVIDO ***
 
-
-// Configura o pipeline de requisição HTTP.
+// === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); // Comentado para ACA Proxy
-
-// Usa a política de CORS configurada
 app.UseCors("CorsPolicy");
-
 app.UseAuthorization();
 
+// 🟢 CORREÇÃO 3: mapControllers precisa ser chamado após UseAuthorization.
 app.MapControllers();
+
+
+builder.Services.AddHealthChecks();
 
 app.Run();

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BancoDeItensWebApi.Migrations
 {
     [DbContext(typeof(BancoDeItensContext))]
-    [Migration("20251028001427_InitialQuestaoMMV")]
-    partial class InitialQuestaoMMV
+    [Migration("20251122155658_Initial_BancoDeItensDb")]
+    partial class Initial_BancoDeItensDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

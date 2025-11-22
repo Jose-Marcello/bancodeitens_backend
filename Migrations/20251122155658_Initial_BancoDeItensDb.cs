@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BancoDeItensWebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialQuestaoMMV : Migration
+    public partial class Initial_BancoDeItensDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
