@@ -1,0 +1,59 @@
+name: Build and deploy .NET Core app to Azure Container App aca-bancodeitens-v3
+
+on:
+  push:
+    branches:
+      - main # Monitorar o branch principal
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout do código
+      - uses: actions/checkout@v4
+        with:
+          repository: Jose-Marcello/bancodeitens_backend
+          ref: main
+
+      # 2. Login no Azure com o Service Principal (SP)
+      # ESSA ETAPA É CRUCIAL para que os comandos AZ CLI tenham permissão
+      - name: Login to Azure with Service Principal
+        uses: azure/login@v1
+        with:
+          # Use o nome do seu segredo JSON que contém clientId, clientSecret e tenantId
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          allow-no-subscriptions: true
+
+      # 3. Login no Azure Container Registry (ACR)
+      # Isso permite que o Docker faça push para o seu Registry
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: acrbancoitensdev.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # 4. Compilar, Fazer Push e Deploy (Tudo em um script)
+      - name: Build, Push, and Deploy to Azure Container Apps
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            # Força a assinatura correta (Embora o Login já ajude, é uma boa prática)
+            az account set --subscription 9cdc0b73-fe9b-4ad5-bdbe-88061cf97f60
+            
+            IMAGE_NAME="acrbancoitensdev.azurecr.io/app-bancodeitens-api:${{ github.sha }}"
+
+            # 1. Compila e constrói a imagem Docker, enviando para o ACR (ACR BUILD)
+            # O SP (Service Principal) agora tem permissão Contributor para fazer isso
+            az acr build --registry acrbancoitensdev \
+                         --image $IMAGE_NAME \
+                         --file BancoDeItensWebApi/Dockerfile \
+                         --resource-group rg-banco-itens-dev \
+                         .
+
+            # 2. Faz o Deploy da nova imagem no Container App
+            # O SP (Service Principal) agora tem permissão Contributor para fazer isso
+            az containerapp update --name aca-bancodeitens-v3 \
+                       --resource-group rg-banco-itens-dev \
+                       --image $IMAGE_NAME \
+                       --revision-suffix ${{ github.run_number }}
