@@ -29,7 +29,7 @@ jobs:
       - name: ACR Login
         uses: azure/docker-login@v1
         with:
-          login-server: acabolaiteus.azurecr.io
+          login-server: novobancoitensacr.azurecr.io
           username: ${{ secrets.APIBANCODEITENSQA_REGISTRY_USERNAME }}
           password: ${{ secrets.APIBANCODEITENSQA_REGISTRY_PASSWORD }}
 
@@ -37,7 +37,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Define o nome da imagem, usando o novo padrão do PoC
-          IMAGE_NAME="acabolaiteus.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
+          IMAGE_NAME="novobancoitensacr.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
           
           # COMANDO BUILD DOCKER (Seu Dockerfile deve estar na raiz do repo)
           docker build . --file Dockerfile --tag $IMAGE_NAME
@@ -52,10 +52,13 @@ jobs:
           # az account set --subscription "SUA_SUBSCRIPTION_ID_AQUI"
           
           inlineScript: |
-            IMAGE_NAME="acabolaiteus.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
+            IMAGE_NAME="novobancoitensacr.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
 
             # Atualiza o Container App (ACA) com a nova imagem
             az containerapp update \
               --name api-bancodeitens-qa \
               --resource-group rg-bolao-aca-prod \
               --image $IMAGE_NAME
+
+
+
