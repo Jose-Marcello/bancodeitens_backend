@@ -38,6 +38,8 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("A Connection String 'DefaultConnection' não foi encontrada. Verifique o appsettings.json ou as Variáveis de Ambiente/Segredos do Azure (usando a chave ConnectionStrings__DefaultConnection).");
 }
 
+builder.Services.AddHealthChecks();
+
 // 2. Injeção do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
 {
@@ -120,8 +122,5 @@ app.UseAuthorization();
 
 // 🟢 CORREÇÃO 3: mapControllers precisa ser chamado após UseAuthorization.
 app.MapControllers();
-
-
-builder.Services.AddHealthChecks();
 
 app.Run();
