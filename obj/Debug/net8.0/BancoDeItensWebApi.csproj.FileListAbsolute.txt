@@ -1,0 +1,9 @@
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.csproj.AssemblyReference.cache
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.GeneratedMSBuildEditorConfig.editorconfig
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.AssemblyInfoInputs.cache
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.AssemblyInfo.cs
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.csproj.CoreCompileInputs.cache
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.MvcApplicationPartsAssemblyInfo.cs
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Desen\BancoDeItens\BancoDeItensWebApi\obj\Debug\net8.0\BancoDeItensWebApi.sourcelink.json

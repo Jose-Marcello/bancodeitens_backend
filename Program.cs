@@ -6,63 +6,93 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder; // Necessário para ApplicationBuilder
 
 var builder = WebApplication.CreateBuilder(args);
 
 // === CONFIGURAÇÃO DE SERVIÇOS INICIAIS ===
 
-
-// [BLOCO DE TESTE SIMPLIFICADO]
-// Adiciona o serviço de controladores (MVC/API)
-builder.Services.AddControllers();
-
-// Adiciona o serviço de controladores (MVC/API)
-/*
+// 🟢 CORREÇÃO 1: Adiciona o serviço de controladores (MVC/API)
 builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true;
     options.Filters.Add(new ProducesAttribute("application/json"));
 });
-*/
 
 // Adiciona o Swagger/OpenAPI (Opcional)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Adiciona o serviço de autorização (necessário para app.UseAuthorization)
+// 🟢 CORREÇÃO 2: Adiciona o serviço de autorização (necessário para app.UseAuthorization)
 builder.Services.AddAuthorization();
 
 
-// === CONFIGURAÇÃO DO DBCONTEXT (AZURE SQL SERVER) ===
+// === CONFIGURAÇÃO DO DBCONTEXT (POSTGRESQL) ===
 
-// LER A CONNECTION STRING DIRETAMENTE DA CONFIGURAÇÃO 
-// A chave buscada deve ser "DefaultConnection" (que é mapeada para ConnectionStrings__DefaultConnection no ACA)
+// 1. A Connection String será lida do sistema de configuração (appsettings ou Variáveis do ACA).
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    // Se a string não for encontrada (ex: no ACA sem Segredo), esta exceção ocorre.
-    throw new InvalidOperationException("A Connection String 'DefaultConnection' não foi encontrada. Verifique o appsettings.json ou os Segredos do Azure.");
+    // Se a string não for encontrada, lança exceção.
+    throw new InvalidOperationException("A Connection String 'DefaultConnection' não foi encontrada. Verifique o appsettings.json ou as Variáveis de Ambiente/Segredos do Azure (usando a chave ConnectionStrings__DefaultConnection).");
 }
 
-// Injeção do DbContext
+// 2. Injeção do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
 {
-    // MUDANÇA CRÍTICA: Trocando para UseSqlServer
-    options.UseSqlServer(connectionString,
-        sqlServerOptionsAction: sqlOptions =>
+    options.UseNpgsql(connectionString,
+        npgsqlOptionsAction: sqlOptions =>
         {
-            // Ativa a retentativa padrão do EF Core (Resiliência de Rede)
+            // REMOVIDA: A linha sqlOptions.MinBatchSize(1) (Específica do CockroachDB)
+
+            // Ativa a retentativa padrão (Execution Strategy) para o PostgreSQL
             sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 10
+                maxRetryCount: 10,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null // Usa o conjunto padrão de erros transientes do Postgree
             );
         })
         .LogTo(Console.WriteLine, LogLevel.Information);
 });
 
+// === FIM DA CONFIGURAÇÃO DE DBCONTEXT ===
 
-// === CONFIGURAÇÃO DO CORS ===
+
+
+
+// === CONFIGURAÇÃO DO DBCONTEXT (AZURE SQL SERVER) ===
+/*
+// LER A CONNECTION STRING DIRETAMENTE DA CONFIGURAÇÃO 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Este erro causará o crash-loop se o segredo do ACA não for configurado corretamente.
+    throw new InvalidOperationException("A Connection String 'BancoDeItensDB' não foi encontrada. Verifique as Variáveis de Ambiente/Segredos do Azure.");
+}
+
+// 2. Injeção do DbContext
+/*
+builder.Services.AddDbContext<BancoDeItensContext>(options =>
+{
+    // 🟢 MUDANÇA CRÍTICA: Trocando para UseSqlServer
+    options.UseSqlServer(connectionString,
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            // Ativa a retentativa padrão do EF Core (Resiliência de Rede)
+            // 🛑 CORREÇÃO DA SINTAXE: Removendo o parâmetro errorCodesToAdd problemático
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 10
+               // maxRetryDelay: TimeSpan.FromSeconds(30)
+            );
+        })
+        .LogTo(Console.WriteLine, LogLevel.Information);
+});
+*/
+
+
+// === CONFIGURAÇÃO DO CORS (MANTENHA ATIVO PARA A URL DIRETA) ===
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -74,68 +104,24 @@ builder.Services.AddCors(options =>
 });
 
 
-//builder.Services.AddHealthChecks();
-builder.Services.AddHealthChecks().AddDbContextCheck<BancoDeItensContext>();
-
-
 var app = builder.Build();
 
-
-
-
-// === AÇÃO FINAL: BLOCO DE APLICAÇÃO DE MIGRAÇÕES NA INICIALIZAÇÃO ===
-// Isso garante que o banco de dados está pronto antes que o app tente consultá-lo.
-
-/*
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<BancoDeItensContext>();
-
-        // Aplica migrações pendentes. Se o banco já estiver atualizado, esta linha não faz nada.
-        // Se houver um problema com o DB, o erro 500 acontece AQUI, mas o ACA consegue logar.
-        db.Database.Migrate();
-    }
-}
-catch (Exception ex)
-{
-    // Se a migração falhar (por exemplo, por falta de permissão ou conexão), o log é gerado.
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "Um erro ocorreu ao aplicar as migrações do banco de dados no startup do host.");
-}
-// =======================================================================
-*/
+// *** IMPORTANTE: BLOCO DE MIGRAÇÃO COMENTADO/REMOVIDO ***
 
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
-//if (app.Environment.IsDevelopment())
-//{
-
-app.UseRouting();
-app.UseSwagger();
-
-app.UseSwaggerUI(options =>
-    {
-        // Define que a UI do Swagger deve ser servida na raiz (/)
-        // Se você tiver um caminho base no SWA, usaria o nome dele aqui
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Banco de Itens V1");
-        options.RoutePrefix = string.Empty; // Define que a UI do Swagger está na raiz do domínio (Ex: https://URL_DO_ACA/)
-    });
-
-    //app.UseSwaggerUI();
-    
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
-// mapControllers precisa ser chamado após UseAuthorization.
+// 🟢 CORREÇÃO 3: mapControllers precisa ser chamado após UseAuthorization.
 app.MapControllers();
 
 
-
-app.MapHealthChecks("/health");
-
-//app.MapGet("/health", () => "Healthy");
+builder.Services.AddHealthChecks();
 
 app.Run();
