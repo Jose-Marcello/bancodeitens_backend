@@ -99,7 +99,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
         policy => policy.WithOrigins("http://localhost:4200",
-                                     "https://icy-stone-049318c1e.3.azurestaticapps.net")
+                                     "https://polite-dune-053c7490f.3.azurestaticapps.net")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

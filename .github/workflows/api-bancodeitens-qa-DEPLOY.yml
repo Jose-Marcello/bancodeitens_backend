@@ -1,4 +1,4 @@
-﻿name: Backend - Build & Deploy Docker Image (GHCR)
+name: Backend - Build & Deploy Docker Image (GHCR)
 
 on:
   push:
