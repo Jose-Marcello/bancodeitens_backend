@@ -38,8 +38,8 @@ jobs:
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          # A linha abaixo precisa ter as aspas simples!
-          azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
+          # CORREÇÃO FINAL: Uso do valor literal, e não da variável
+          azure_static_web_apps_api_token: 'd11867fe6d654d7cce5ed29fea1c498cc717bd03ee0d1534d5c7821e2a7b897203-62e1c739-3737-488a-809a-6845512c5dda00f2507053c7490f' 
           action: "upload"
           
           # CORREÇÃO 2 (PATH): Caminho de saída correto e limpo (resolvendo o erro de index.html)
@@ -61,4 +61,5 @@ jobs:
           action: "close"
           # O token também precisa ser passado aqui. Verifique se a sua versão local o faz.
           # azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
+
 
