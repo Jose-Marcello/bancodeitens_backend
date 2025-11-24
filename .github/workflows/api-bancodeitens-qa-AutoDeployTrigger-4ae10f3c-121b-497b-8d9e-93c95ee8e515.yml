@@ -1,64 +1,63 @@
-name: Trigger auto deployment for api-bancodeitens-qa
+name: Azure Static Web Apps CI/CD
 
 on:
   push:
-    branches:
-      [ main ]
-    paths:
-      - '**'
-      # Você pode adicionar caminhos específicos aqui, se necessário
-
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-
+    name: Build and Deploy Job
+    permissions:
+      id-token: write
+      contents: read
+      
     steps:
-      - name: Checkout to the branch
-        uses: actions/checkout@v2
-
-      # 1. LOGIN NO AZURE COM SERVICE PRINCIPAL (SPN JSON)
-      - name: Azure Login (Service Principal)
-        uses: azure/login@v2
+      - uses: actions/checkout@v3
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_QA }}
-          # Não precisa da subscription ID aqui se o JSON já a tiver.
-
-      # 2. LOGIN NO ACR (Obrigatório para o push)
-      - name: ACR Login
-        uses: azure/docker-login@v1
+          submodules: true
+          lfs: false
+          
+      # 1. LOGIN E OIDC (MANTIDO CONFORME SUA CONFIGURAÇÃO)
+      - name: Install OIDC Client from Core Package
+        run: npm install @actions/core@1.6.0 @actions/http-client
+      - name: Get Id Token
+        uses: actions/github-script@v6
+        id: idtoken
         with:
-          login-server: novobancoitensacr.azurecr.io
-          username: ${{ secrets.APIBANCODEITENSQA_REGISTRY_USERNAME }}
-          password: ${{ secrets.APIBANCODEITENSQA_REGISTRY_PASSWORD }}
-
-      # 3. BUILD MANUAL E PUSH DA IMAGEM CORRETA
-      - name: Build and Push Docker Image
-        run: |
-          # Define o nome da imagem, usando o novo padrão do PoC
-          IMAGE_NAME="novobancoitensacr.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
+          script: |
+            const coredemo = require('@actions/core')
+            return await coredemo.getIDToken()
+          result-encoding: string
           
-          # COMANDO BUILD DOCKER (Seu Dockerfile deve estar na raiz do repo)
-          docker build . --file Dockerfile --tag $IMAGE_NAME
-          
-          docker push $IMAGE_NAME
-
-      # 4. DEPLOY MANUAL NO CONTAINER APPS VIA AZ CLI
-      - name: Deploy to Azure Container Apps (QA)
-        uses: azure/cli@v1
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          # Opcional: Força o contexto de subscrição, se necessário.
-          # az account set --subscription "SUA_SUBSCRIPTION_ID_AQUI"
+          # CORREÇÃO 1 (TOKEN): Uso de aspas simples para forçar a leitura correta do segredo
+          azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
+          action: "upload"
           
-          inlineScript: |
-            IMAGE_NAME="novobancoitensacr.azurecr.io/api-bancodeitens-qa:${{ github.sha }}"
-
-            # Atualiza o Container App (ACA) com a nova imagem
-            az containerapp update \
-              --name api-bancodeitens-qa \
-              --resource-group rg-bolao-aca-prod \
-              --image $IMAGE_NAME
-
-
-
+          # CORREÇÃO 2 (PATH): Caminho de saída correto e limpo (resolvendo o erro de index.html)
+          app_location: "/" 
+          api_location: "" 
+          output_location: "dist/banco-de-itens-app" 
+          
+          github_id_token: ${{ steps.idtoken.outputs.result }}
+          
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: "close"
+          # O token também precisa ser passado aqui. Verifique se a sua versão local o faz.
+          # azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
