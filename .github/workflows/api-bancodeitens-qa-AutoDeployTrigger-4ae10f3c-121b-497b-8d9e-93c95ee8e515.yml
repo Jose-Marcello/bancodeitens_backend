@@ -38,7 +38,7 @@ jobs:
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          # CORREÇÃO 1 (TOKEN): Uso de aspas simples para forçar a leitura correta do segredo
+          # A linha abaixo precisa ter as aspas simples!
           azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
           action: "upload"
           
@@ -61,3 +61,4 @@ jobs:
           action: "close"
           # O token também precisa ser passado aqui. Verifique se a sua versão local o faz.
           # azure_static_web_apps_api_token: '${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_DUNE_053C7490F }}'
+
