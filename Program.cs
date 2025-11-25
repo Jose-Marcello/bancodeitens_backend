@@ -93,15 +93,18 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
 });
 */
 
-
+// Certifique-se de que este bloco substitua qualquer outro bloco CORS e que a sintaxe esteja perfeita:
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        policy => policy.AllowAnyOrigin() // Permite TODAS as origens
+        policy => policy.AllowAnyOrigin() // CORS TOTALMENTE PERMISSIVO
             .AllowAnyMethod()
-            .AllowAnyHeader()); // <-- SINTAXE CORRETA
+            .AllowAnyHeader()); // <--- AQUI DEVE ESTAR PERFEITO (sem vírgulas ou pontos e vírgulas a mais)
 });
- 
+
+
+
+
 /*
 builder.Services.AddCors(options =>
 {
