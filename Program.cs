@@ -101,7 +101,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()); // <-- SINTAXE CORRETA
 });
-
+ 
 /*
 builder.Services.AddCors(options =>
 {
