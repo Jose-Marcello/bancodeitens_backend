@@ -99,7 +99,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
         policy => policy.WithOrigins("http://localhost:4200",
-                                     "https://polite-dune-053c7490f.3.azurestaticapps.net")
+                                     "https://polite-dune-053c7490f.3.azurestaticapps.net",
+                                     "https://app-bancodeitens-angular-front-production.up.railway.app")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
