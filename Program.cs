@@ -103,8 +103,8 @@ builder.Services.AddCors(options =>
         //                             "https://polite-dune-053c7490f.3.azurestaticapps.net",
         //                             "https://app-bancodeitens-angular-front-production.up.railway.app")
             .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials());
+            .AllowAnyHeader();
+            //.AllowCredentials());
 });
 
 
