@@ -97,6 +97,15 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
+        policy => policy.AllowAnyOrigin() // Permite TODAS as origens
+            .AllowAnyMethod()
+            .AllowAnyHeader()); // <-- SINTAXE CORRETA
+});
+
+/*
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
         policy => policy.WithOrigins(
             "http://localhost:4200",
             "https://polite-dune-053c7490f.3.azurestaticapps.net",
@@ -107,6 +116,7 @@ builder.Services.AddCors(options =>
         // REMOVA ESTA LINHA: .AllowCredentials()
         );
 });
+*/
 
 var app = builder.Build();
 
