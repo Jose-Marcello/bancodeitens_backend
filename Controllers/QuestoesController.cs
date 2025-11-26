@@ -2,54 +2,53 @@
 using BancoDeItensWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using BancoDeItensWebApi.Interfaces; // Para usar a interface do Serviço (IQuestaoService)
 
 namespace BancoDeItensWebApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    [Produces("application/json")]
+    [ApiController]
     public class QuestoesController : ControllerBase
     {
-        private readonly BancoDeItensContext _context; // Usando o seu DbContext: BancoDeItensContext
+        // 🛑 MUDANÇA CRÍTICA: Não injetamos mais o Repositório, mas sim a Interface do Serviço.
+        private readonly IQuestaoService _questaoService;
 
-        public QuestoesController(BancoDeItensContext context)
+        // Injeção de Dependência: O Controller recebe o Serviço.
+        public QuestoesController(IQuestaoService questaoService)
         {
-            _context = context;
+            _questaoService = questaoService;
         }
 
         // GET: api/Questoes
+        // Retorna a lista de todas as questões
         [HttpGet]
-        // O tipo de retorno 'IActionResult' é usado para dar flexibilidade em retornar diferentes status HTTP (Ok, NotFound, etc.)
-        public async Task<IActionResult> GetQuestoes()
+        public async Task<ActionResult<IEnumerable<Questao>>> GetQuestoes()
         {
-            var questoes = await _context.Questoes.ToListAsync();
-
-            // Retornar 'NotFound' se a lista for nula é uma opção de tratamento de erro.
-            if (questoes == null)
-            {
-                // Este cenário é raro com ToListAsync(), mas é uma boa prática de segurança.
-                return NotFound("Nenhuma questão encontrada no banco de dados.");
-            }
-
-            // CORREÇÃO APLICADA: 
-            // Retorna 200 OK e o objeto 'questoes' (que será serializado como JSON, 
-            // sendo uma lista vazia '[]' se não houver dados).
+            // O Controller apenas delega a chamada para a camada de Serviço.
+            var questoes = await _questaoService.GetAllQuestoesAsync();
             return Ok(questoes);
         }
 
         // POST: api/Questoes
+        // Adiciona uma nova questão
         [HttpPost]
         public async Task<ActionResult<Questao>> PostQuestao(Questao questao)
         {
-            // Adiciona uma nova questão ao banco de dados
-            _context.Questoes.Add(questao);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // O Controller delega a chamada para a camada de Serviço, que contém a lógica de negócio.
+                await _questaoService.AddQuestaoAsync(questao);
 
-            // Retorna a questão criada e o código 201 Created, seguindo a convenção REST.
-            return CreatedAtAction(nameof(GetQuestoes), new { id = questao.Id }, questao);
+                // Retorna 201 Created com a questão salva.
+                return CreatedAtAction(nameof(GetQuestoes), new { id = questao.Id }, questao);
+            }
+            catch (ArgumentException ex)
+            {
+                // Se o Serviço lançar uma exceção de regra de negócio, retorna 400 Bad Request.
+                return BadRequest(ex.Message);
+            }
         }
-
-        // Outros métodos (PUT, DELETE, etc.) viriam aqui
     }
 }

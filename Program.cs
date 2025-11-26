@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using Microsoft.AspNetCore.Builder;
+using BancoDeItensWebApi.Interfaces;
+using BancoDeItensWebApi.Repositories;
+using BancoDeItensWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
+
+// 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (Application Layer e Infrastructure Layer)
+
+// 1. Repositório: Liga IQuestaoRepository à QuestaoRepository (Persistence/Infrastructure)
+// O Repositório é responsável pela camada de acesso a dados.
+builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
+
+// 2. Serviço: Liga IQuestaoService à QuestaoService (Business/Application)
+// O Serviço é responsável pela lógica de negócio e coordena o Repositório.
+builder.Services.AddScoped<IQuestaoService, QuestaoService>();
+
 
 // === CONFIGURAÇÃO DO DBCONTEXT (POSTGRESQL) ===
 
@@ -50,7 +64,7 @@ if (string.IsNullOrEmpty(connectionString))
 // 2. Injeção do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
 {
-    // 🟢 CRÍTICO: Usa a string de conexão determinada acima.
+    // CRÍTICO: Usa a string de conexão determinada acima.
     options.UseNpgsql(connectionString,
         npgsqlOptionsAction: sqlOptions =>
         {
