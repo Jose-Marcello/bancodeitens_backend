@@ -6,6 +6,8 @@ C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\BancoDeItensWebApi.dep
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\BancoDeItensWebApi.runtimeconfig.json
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\BancoDeItensWebApi.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\BancoDeItensWebApi.pdb
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\AutoMapper.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\FluentValidation.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Humanizer.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -28,6 +30,10 @@ C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.Extensions.H
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Mono.TextTemplating.dll
 C:\Desen\BancoDeItens\BancoDeItensWebApi\bin\Debug\net8.0\Npgsql.dll

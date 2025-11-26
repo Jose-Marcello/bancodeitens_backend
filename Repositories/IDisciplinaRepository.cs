@@ -15,7 +15,7 @@ namespace BancoDeItensWebApi.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<QuestaoCadastroDto>> GetAllAsync()
+        public async Task<IEnumerable<Disciplina>> GetAllAsync()
         {
             // Retorna todas as Disciplinas
             return await _context.Disciplinas.ToListAsync();

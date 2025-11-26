@@ -5,6 +5,6 @@ namespace BancoDeItensWebApi.Interfaces
     // Contrato para acesso a dados da entidade Disciplina.
     public interface IDisciplinaRepository
     {
-        Task<IEnumerable<QuestaoCadastroDto>> GetAllAsync();
+        Task<IEnumerable<Disciplina>> GetAllAsync();
     }
 }

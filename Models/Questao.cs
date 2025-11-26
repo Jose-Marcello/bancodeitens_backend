@@ -19,6 +19,6 @@ namespace BancoDeItensWebApi.Models
         public Guid DisciplinaId { get; set; }
 
         // Propriedade de navegação para o objeto Disciplina
-        public QuestaoCadastroDto Disciplina { get; set; } = null!;
+        public Disciplina Disciplina { get; set; } = null!;
     }
 }
