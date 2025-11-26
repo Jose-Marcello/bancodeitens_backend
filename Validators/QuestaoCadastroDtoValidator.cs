@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace BancoDeItensWebApi.Validators
 {
-    public class QuestaoCadastroDtoValidator : AbstractValidator<QuestaoCadastroDto>
+    public class QuestaoCadastroDtoValidator : AbstractValidator<MigrationExtensions>
     {
         public QuestaoCadastroDtoValidator()
         {

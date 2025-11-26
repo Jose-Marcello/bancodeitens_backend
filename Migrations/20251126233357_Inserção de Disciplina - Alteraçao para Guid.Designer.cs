@@ -3,6 +3,7 @@ using System;
 using BancoDeItensWebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BancoDeItensWebApi.Migrations
 {
     [DbContext(typeof(BancoDeItensContext))]
-    partial class BancoDeItensContextModelSnapshot : ModelSnapshot
+    [Migration("20251126233357_Inserção de Disciplina - Alteraçao para Guid")]
+    partial class InserçãodeDisciplinaAlteraçaoparaGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

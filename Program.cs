@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using BancoDeItensWebApi.Interfaces;
 using BancoDeItensWebApi.Repositories;
 using BancoDeItensWebApi.Services;
+using BancoDeItensWebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,6 +96,9 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+app.ApplyMigrations();
+
 
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 if (app.Environment.IsDevelopment())
