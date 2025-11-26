@@ -94,14 +94,15 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
 */
 
 // Certifique-se de que este bloco substitua qualquer outro bloco CORS e que a sintaxe esteja perfeita:
-builder.Services.AddCors(options => 
+/*builder.Services.AddCors(options =>
+
 { 
     options.AddPolicy("CorsPolicy",
         policy => policy.AllowAnyOrigin() // CORS TOTALMENTE PERMISSIVO
             .AllowAnyMethod()
             .AllowAnyHeader()); // <--- AQUI DEVE ESTAR PERFEITO (sem vírgulas ou pontos e vírgulas a mais)
 });
-
+/*
 
 
 
@@ -132,7 +133,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("CorsPolicy");
+//app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 // 🟢 CORREÇÃO 3: mapControllers precisa ser chamado após UseAuthorization.
