@@ -1,13 +1,24 @@
-﻿// Localização: Models/Questao.cs
-// Modelo Mínimo Viável (MMV) para o teste de conectividade
+﻿// Nome do arquivo: Models/Questao.cs
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BancoDeItensWebApi.Models
 {
-    public class Questao
+    // Questao herda de Entity (agora usa Guid como PK)
+    public class Questao : Entity
     {
-        public int Id { get; set; }
+        // O Id (Guid) é herdado de Entity.
 
-        // A Pergunta / Enunciado
-        public required string Descricao { get; set; }
+        [Required]
+        [StringLength(2000)]
+        public string Descricao { get; set; } = string.Empty;
+
+        // 🛑 MUDANÇA CRÍTICA: A chave estrangeira agora é do tipo Guid.
+        [ForeignKey("Disciplina")]
+        public Guid DisciplinaId { get; set; }
+
+        // Propriedade de navegação para o objeto Disciplina
+        public QuestaoCadastroDto Disciplina { get; set; } = null!;
     }
-
 }

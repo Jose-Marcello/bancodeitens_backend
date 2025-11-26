@@ -1,27 +1,44 @@
-﻿// Localização: Data/CatalogoContext.cs
-using BancoDeItensWebApi.Models;
+﻿// Nome do arquivo: Data/BancoDeItensContext.cs
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
+using BancoDeItensWebApi.Models;
+using System;
 
 namespace BancoDeItensWebApi.Data
 {
-    // O nome do projeto aqui deve ser ajustado para corresponder ao seu projeto (BancoDeItensWebApi)
     public class BancoDeItensContext : DbContext
     {
         public BancoDeItensContext(DbContextOptions<BancoDeItensContext> options) : base(options)
         {
         }
 
-        // Define a tabela que o EF Core irá mapear
-        public DbSet<Questao> Questoes { get; set; }
+        public DbSet<Questao> Questoes { get; set; } = null!;
+        public DbSet<Disciplina> Disciplinas { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configuração mínima para a tabela Questao
-            modelBuilder.Entity<Questao>().ToTable("Questoes");
-            modelBuilder.Entity<Questao>().HasKey(q => q.Id);
-            modelBuilder.Entity<Questao>().Property(q => q.Descricao).IsRequired();
+            // 🛑 MUDANÇA CRÍTICA: Configuração de chaves Guid
+            modelBuilder.Entity<Questao>()
+                .HasKey(q => q.Id);
+
+            modelBuilder.Entity<Disciplina>()
+                .HasKey(d => d.Id);
+
+            // Configuração do relacionamento One-to-Many
+            modelBuilder.Entity<Questao>()
+                .HasOne(q => q.Disciplina)
+                .WithMany(d => d.Questoes)
+                .HasForeignKey(q => q.DisciplinaId)
+                .IsRequired();
+
+            // 🛑 MUDANÇA CRÍTICA: Criação de Guids para os dados iniciais
+            modelBuilder.Entity<Disciplina>().HasData(
+                new Disciplina { Id = Guid.Parse("10000000-0000-0000-0000-000000000001"), Nome = "Matemática" },
+                new Disciplina { Id = Guid.Parse("10000000-0000-0000-0000-000000000002"), Nome = "História" },
+                new Disciplina { Id = Guid.Parse("10000000-0000-0000-0000-000000000003"), Nome = "Geografia" },
+                new Disciplina { Id = Guid.Parse("10000000-0000-0000-0000-000000000004"), Nome = "Português" }
+            );
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
