@@ -46,8 +46,8 @@ builder.Services.AddAutoMapper(cfg =>
 
 
 builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
-builder.Services.AddScoped<IDisciplinaRepository, IDisciplinaRepository>();
-builder.Services.AddScoped<IQuestaoService, IQuestaoService>();
+builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
+builder.Services.AddScoped<IQuestaoService, QuestaoService>();
 
 
 // 🛑 CORREÇÃO FINAL DE CORS: Adicionando o serviço de CORS totalmente permissivo
