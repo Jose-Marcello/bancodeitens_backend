@@ -4,7 +4,7 @@ using System; // Import necessário para Guid
 namespace BancoDeItensWebApi.Dtos
 {
     // Data Transfer Object (DTO) para a entrada de dados (Cadastro de Questão).
-    public class MigrationExtensions
+    public class QuestaoCadastroDto
     {
         public string Descricao { get; set; } = string.Empty;
 

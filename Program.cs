@@ -1,24 +1,36 @@
-﻿using BancoDeItensWebApi.Data;
+﻿// Nome do arquivo: Program.cs
+using System;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using Microsoft.AspNetCore.Builder;
+using FluentValidation;
+//using FluentValidation.DependencyInjection.Extensions;
+using BancoDeItensWebApi.Data;
 using BancoDeItensWebApi.Interfaces;
 using BancoDeItensWebApi.Repositories;
 using BancoDeItensWebApi.Services;
 using BancoDeItensWebApi.Extensions;
+using BancoDeItensWebApi.Profiles; // NECESSÁRIO para resolver o AutoMapperProfile
+using AutoMapper; // NECESSÁRIO para usar o IConfigurationExpression
 
 var builder = WebApplication.CreateBuilder(args);
 
 // === CONFIGURAÇÃO DE SERVIÇOS INICIAIS ===
 
+// 🛑 REGISTRO DO MVC E FLUENTVALIDATION
 builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true;
     options.Filters.Add(new ProducesAttribute("application/json"));
 });
+
+// 🟢 REGISTRO MANUAL DO FLUENTVALIDATION
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,49 +39,67 @@ builder.Services.AddHealthChecks();
 
 // 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (Application Layer e Infrastructure Layer)
 
-// 1. Repositório: Liga IQuestaoRepository à QuestaoRepository (Persistence/Infrastructure)
-// O Repositório é responsável pela camada de acesso a dados.
-builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
+// 🛑 CORREÇÃO FINAL DO AUTOMAPPER: Usando a sintaxe de configuração explícita (Universal)
+// A sintaxe de configuração explícita resolve o erro CS1503 no seu ambiente.
+builder.Services.AddAutoMapper(cfg =>
+{
+    // Adiciona o perfil ao pipeline de configuração.
+    cfg.AddProfile(new AutoMapperProfile());
+}, Assembly.GetExecutingAssembly());
 
-// 2. Serviço: Liga IQuestaoService à QuestaoService (Business/Application)
-// O Serviço é responsável pela lógica de negócio e coordena o Repositório.
+
+builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
+builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
 builder.Services.AddScoped<IQuestaoService, QuestaoService>();
 
 
 // === CONFIGURAÇÃO DO DBCONTEXT (POSTGRESQL) ===
 
-// 1. Prioriza a leitura da variável de ambiente comum do Railway/Cloud
-var railwayConnectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+var railwayConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var connectionString = "";
 
-if (!string.IsNullOrEmpty(railwayConnectionString))
+if (string.IsNullOrEmpty(railwayConnectionString))
 {
-    // Se DATABASE_URL for encontrada, ela será a principal string.
-    connectionString = railwayConnectionString;
-    Console.WriteLine("Usando DATABASE_URL do ambiente (Railway).");
+    railwayConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+}
+
+if (string.IsNullOrEmpty(railwayConnectionString))
+{
+    throw new InvalidOperationException("A Connection String 'DefaultConnection' ou 'DATABASE_URL' não foi encontrada.");
+}
+
+// 🛑 CORREÇÃO DA CONNECTION STRING: Conversão de URL (postgresql://...) para Chave/Valor
+// Isso resolve o System.ArgumentException: Format of the initialization string...
+if (railwayConnectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+{
+    var match = Regex.Match(railwayConnectionString,
+        @"postgresql://(?<user>[^:]+):(?<password>[^@]+)@(?<host>[^:]+):(?<port>\d+)/(?<database>.+)");
+
+    if (match.Success)
+    {
+        connectionString = $"Host={match.Groups["host"].Value};" +
+                           $"Port={match.Groups["port"].Value};" +
+                           $"Username={match.Groups["user"].Value};" +
+                           $"Password={match.Groups["password"].Value};" +
+                           $"Database={match.Groups["database"].Value}";
+    }
+    else
+    {
+        throw new InvalidOperationException("A Connection String RAILWAY não está no formato URL esperado.");
+    }
 }
 else
 {
-    // Caso contrário, tenta ler a DefaultConnection (que será sobrescrita pela convenção do .NET ou pelo appsettings)
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    Console.WriteLine($"Usando ConnectionStrings:DefaultConnection. Lida: {connectionString?.Substring(0, connectionString.IndexOf(';') + 1)}...");
+    connectionString = railwayConnectionString;
 }
+// FIM DA CORREÇÃO CRÍTICA
 
 
-if (string.IsNullOrEmpty(connectionString))
-{
-    // Se a string ainda for nula/vazia, lança exceção.
-    throw new InvalidOperationException("A Connection String 'DefaultConnection' ou 'DATABASE_URL' não foi encontrada. O servidor não pode iniciar.");
-}
-
-// 2. Injeção do DbContext
 builder.Services.AddDbContext<BancoDeItensContext>(options =>
 {
-    // CRÍTICO: Usa a string de conexão determinada acima.
     options.UseNpgsql(connectionString,
         npgsqlOptionsAction: sqlOptions =>
         {
-            // Ativa a retentativa padrão (Execution Strategy) para o PostgreSQL
             sqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 10,
                 maxRetryDelay: TimeSpan.FromSeconds(30),
@@ -79,26 +109,11 @@ builder.Services.AddDbContext<BancoDeItensContext>(options =>
         .LogTo(Console.WriteLine, LogLevel.Information);
 });
 
-// === FIM DA CONFIGURAÇÃO DE DBCONTEXT ===
-
-// === BLOCO DE CORS (CONFIGURAÇÃO SEGURA - Permite apenas as URLs do Frontend) ===
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy",
-        policy => policy.WithOrigins(
-            "http://localhost:4200", // Para desenvolvimento local
-                                     // URL de produção do frontend no Railway (com HTTPS)
-            "https://app-bancodeitens-angular-front-production.up.railway.app")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-        );
-});
-
 
 var app = builder.Build();
 
+// 🛑 BLOCo DE MIGRATIONS: Executa a aplicação da Migration
 app.ApplyMigrations();
-
 
 // === CONFIGURAÇÃO DO PIPELINE DE REQUISIÇÃO HTTP ===
 if (app.Environment.IsDevelopment())
@@ -113,3 +128,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
