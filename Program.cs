@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FluentValidation;
-using FluentValidation.DependencyInjection.Extensions;
 using BancoDeItensWebApi.Data;
 using BancoDeItensWebApi.Interfaces;
 using BancoDeItensWebApi.Repositories;
@@ -30,6 +29,7 @@ builder.Services.AddControllers(options =>
 });
 
 // 🟢 REGISTRO MANUAL DO FLUENTVALIDATION
+// A sintaxe de using foi simplificada para resolver o erro CS0234
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 
@@ -38,7 +38,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
 
-// 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (Correção final do AutoMapper)
+// 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (AutoMapper e Serviços)
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile(new AutoMapperProfile());
@@ -46,8 +46,8 @@ builder.Services.AddAutoMapper(cfg =>
 
 
 builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
-builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
-builder.Services.AddScoped<IQuestaoService, QuestaoService>();
+builder.Services.AddScoped<IDisciplinaRepository, IDisciplinaRepository>();
+builder.Services.AddScoped<IQuestaoService, IQuestaoService>();
 
 
 // 🛑 CORREÇÃO FINAL DE CORS: Adicionando o serviço de CORS totalmente permissivo
