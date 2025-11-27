@@ -14,6 +14,7 @@ namespace BancoDeItensWebApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // 1. Altera a Descrição (ajuste de tamanho, não afeta o erro de PK)
             migrationBuilder.AlterColumn<string>(
                 name: "Descricao",
                 table: "Questoes",
@@ -23,15 +24,29 @@ namespace BancoDeItensWebApi.Migrations
                 oldClrType: typeof(string),
                 oldType: "text");
 
+            // 🛑 CORREÇÃO CRÍTICA (Passo 1): Retira a estratégia de geração de valor (IDENTITY)
+            // Isso previne o erro 22023 do PostgreSQL antes de tentar trocar o tipo.
+            migrationBuilder.AlterColumn<int>(
+                name: "Id",
+                table: "Questoes",
+                type: "integer",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "integer")
+                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None) // Remove o Identity
+                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+
+            // 🛑 CORREÇÃO CRÍTICA (Passo 2): Agora que o Id é um int "normal", ele pode ser alterado para Guid (uuid).
             migrationBuilder.AlterColumn<Guid>(
                 name: "Id",
                 table: "Questoes",
                 type: "uuid",
                 nullable: false,
                 oldClrType: typeof(int),
-                oldType: "integer")
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                oldType: "integer");
 
+            // 4. Adiciona a coluna DisciplinaId (FK)
             migrationBuilder.AddColumn<Guid>(
                 name: "DisciplinaId",
                 table: "Questoes",
@@ -39,6 +54,7 @@ namespace BancoDeItensWebApi.Migrations
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
+            // 5. Cria a tabela Disciplinas
             migrationBuilder.CreateTable(
                 name: "Disciplinas",
                 columns: table => new
@@ -51,6 +67,7 @@ namespace BancoDeItensWebApi.Migrations
                     table.PrimaryKey("PK_Disciplinas", x => x.Id);
                 });
 
+            // 6. Insere os dados iniciais
             migrationBuilder.InsertData(
                 table: "Disciplinas",
                 columns: new[] { "Id", "Nome" },
@@ -62,6 +79,7 @@ namespace BancoDeItensWebApi.Migrations
                     { new Guid("10000000-0000-0000-0000-000000000004"), "Português" }
                 });
 
+            // 7. Cria o índice e a chave estrangeira
             migrationBuilder.CreateIndex(
                 name: "IX_Questoes_DisciplinaId",
                 table: "Questoes",
@@ -79,6 +97,7 @@ namespace BancoDeItensWebApi.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            // O método Down reverte as alterações, voltando ao estado anterior
             migrationBuilder.DropForeignKey(
                 name: "FK_Questoes_Disciplinas_DisciplinaId",
                 table: "Questoes");
