@@ -8,14 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FluentValidation;
-//using FluentValidation.DependencyInjection.Extensions;
+using FluentValidation.DependencyInjection.Extensions;
 using BancoDeItensWebApi.Data;
 using BancoDeItensWebApi.Interfaces;
 using BancoDeItensWebApi.Repositories;
 using BancoDeItensWebApi.Services;
 using BancoDeItensWebApi.Extensions;
-using BancoDeItensWebApi.Profiles; // NECESSÁRIO para resolver o AutoMapperProfile
-using AutoMapper; // NECESSÁRIO para usar o IConfigurationExpression
+using BancoDeItensWebApi.Profiles;
+using AutoMapper;
+using System.Linq; // Necessário para a lógica de conversão de Connection String
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,13 +38,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddHealthChecks();
 
-// 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (Application Layer e Infrastructure Layer)
-
-// 🛑 CORREÇÃO FINAL DO AUTOMAPPER: Usando a sintaxe de configuração explícita (Universal)
-// A sintaxe de configuração explícita resolve o erro CS1503 no seu ambiente.
+// 🟢 REGISTRO DA INJEÇÃO DE DEPENDÊNCIA (Correção final do AutoMapper)
 builder.Services.AddAutoMapper(cfg =>
 {
-    // Adiciona o perfil ao pipeline de configuração.
     cfg.AddProfile(new AutoMapperProfile());
 }, Assembly.GetExecutingAssembly());
 
@@ -51,6 +48,16 @@ builder.Services.AddAutoMapper(cfg =>
 builder.Services.AddScoped<IQuestaoRepository, QuestaoRepository>();
 builder.Services.AddScoped<IDisciplinaRepository, DisciplinaRepository>();
 builder.Services.AddScoped<IQuestaoService, QuestaoService>();
+
+
+// 🛑 CORREÇÃO FINAL DE CORS: Adicionando o serviço de CORS totalmente permissivo
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        policy => policy.AllowAnyOrigin() // CORS TOTALMENTE PERMISSIVO
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 
 
 // === CONFIGURAÇÃO DO DBCONTEXT (POSTGRESQL) ===
@@ -69,7 +76,6 @@ if (string.IsNullOrEmpty(railwayConnectionString))
 }
 
 // 🛑 CORREÇÃO DA CONNECTION STRING: Conversão de URL (postgresql://...) para Chave/Valor
-// Isso resolve o System.ArgumentException: Format of the initialization string...
 if (railwayConnectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
 {
     var match = Regex.Match(railwayConnectionString,
@@ -128,4 +134,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
