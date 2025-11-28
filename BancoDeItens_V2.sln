@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path=".gitignore" />
+    <File Path="Dockerfile" />
+    <File Path="NuGet.config" />
+  </Folder>
+  <Project Path="src/BancoDeItens.Application/BancoDeItens.Application.csproj" />
+  <Project Path="src/BancoDeItens.Domain/BancoDeItens.Domain.csproj" />
+  <Project Path="src/BancoDeItens.Infrastructure/BancoDeItens.Infrastructure.csproj" />
+  <Project Path="src/BancoDeItens.WebApi/BancoDeItens.WebApi.csproj" />
+</Solution>

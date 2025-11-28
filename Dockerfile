@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # 1. Copia o .sln
-COPY BancoDeItens_V2.slnx .
+COPY BancoDeItens_V2.sln .
 # NOTA: Ajuste o nome do arquivo se for BancoDeItens.sln
 
 # 2. Copia a pasta 'src' inteira e o NuGet.config
@@ -11,7 +11,7 @@ COPY src/ src/
 COPY NuGet.config .
 
 # 3. Restaura explicitamente a Solução
-RUN dotnet restore
+RUN dotnet restore BancoDeItens_V2.sln
 
 # 4. Publica explicitamente com o Runtime
 # Adicionamos o RuntimeIdentifier para garantir que o buildpack não falhe
