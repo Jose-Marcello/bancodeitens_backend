@@ -1,4 +1,4 @@
-﻿using BancoDeItensWebApi.Data;
+﻿using BancoDeItens.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BancoDeItensWebApi.Extensions

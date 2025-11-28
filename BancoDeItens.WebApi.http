@@ -1,0 +1,11 @@
+@BancoDeItens.WebApi_HostAddress = http://localhost:5298
+
+GET {{BancoDeItens.WebApi_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{BancoDeItens.WebApi_HostAddress}}/todos/1
+Accept: application/json
+
+###

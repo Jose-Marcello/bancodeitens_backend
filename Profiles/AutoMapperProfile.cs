@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using BancoDeItens.Domain.Models;
 using BancoDeItensWebApi.Dtos;
-using BancoDeItensWebApi.Models;
+
 
 namespace BancoDeItensWebApi.Profiles
 {

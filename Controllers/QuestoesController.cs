@@ -1,10 +1,8 @@
-﻿using BancoDeItensWebApi.Data;
-using BancoDeItensWebApi.Models;
+﻿using BancoDeItens.Application.Interfaces;
+using BancoDeItens.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BancoDeItensWebApi.Interfaces; // Para usar a interface do Serviço (IQuestaoService)
 
 namespace BancoDeItensWebApi.Controllers
 {

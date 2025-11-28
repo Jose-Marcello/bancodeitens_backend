@@ -8,14 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FluentValidation;
-using BancoDeItensWebApi.Data;
-using BancoDeItensWebApi.Interfaces;
-using BancoDeItensWebApi.Repositories;
-using BancoDeItensWebApi.Services;
+using BancoDeItens.Infrastructure.Data;
+using BancoDeItens.Application.Interfaces;
+using BancoDeItens.Infrastructure.Data.Repositories;
+using BancoDeItens.Application.Services;
 using BancoDeItensWebApi.Extensions;
 using BancoDeItensWebApi.Profiles;
-using AutoMapper;
-using System.Linq; // Necessário para a lógica de conversão de Connection String
+//using FluentFluentValidation;
+using FluentValidation.AspNetCore;
+
+//using AutoMapper;
+using System.Linq;
+using BancoDeItens.Domain.Interfaces; // Necessário para a lógica de conversão de Connection String
 
 var builder = WebApplication.CreateBuilder(args);
 
