@@ -1,13 +1,15 @@
 ﻿# Estágio 1: Build da Aplicação ASP.NET Core (BUILD)
 #------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /src 
+# O Railway define a raiz do repo como o contexto.
+# O WORKDIR /src AGORA É DENTRO DO CONTÊINER (A RAIZ DO BUILD).
 
-# Copia e restaura a Solução inteira (incluindo todos os projetos e .sln)
-# Copia o .sln
+# Copia o .sln da raiz do contexto para o /src do contêiner
 COPY BancoDeItens.sln . 
 
-# Copia os arquivos de projeto (todos os .csproj)
+# Copia todos os arquivos de projeto. Como o WORKDIR é /src, os paths funcionam
+# Exemplo: Copia src/BancoItens.Api/BancoItens.Api.csproj
 COPY src/BancoItens.Api/*.csproj src/BancoItens.Api/
 COPY src/BancoItens.Application/*.csproj src/BancoItens.Application/
 COPY src/BancoItens.Domain/*.csproj src/BancoItens.Domain/
@@ -16,11 +18,10 @@ COPY src/BancoItens.Infrastructure/*.csproj src/BancoItens.Infrastructure/
 # Restaura as dependências (agora usando a solução)
 RUN dotnet restore
 
-# Copia o restante dos arquivos (código-fonte)
+# Copia o restante do código-fonte (para /src)
 COPY . .
 
 # Publica a Solução focando no projeto de API
-# Atenção: 'BancoItens.Api.csproj' é o novo nome do projeto!
 RUN dotnet publish "src/BancoItens.Api/BancoItens.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 
@@ -35,5 +36,4 @@ EXPOSE 8080
 COPY --from=build /app/publish .
 
 # Comando final para rodar a aplicação
-# Atenção: O nome da DLL final é o nome do projeto (BancoItens.Api.dll)!
 CMD ["dotnet", "BancoItens.Api.dll", "--urls", "http://0.0.0.0:8080"]
