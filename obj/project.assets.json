@@ -1805,8 +1805,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Cliente\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Cliente\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -1817,10 +1816,8 @@
       "packagesPath": "C:\\Users\\Cliente\\.nuget\\packages\\",
       "outputPath": "C:\\Desen\\BancoDeItens_V2\\src\\BancoDeItens.WebApi\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
+        "C:\\Desen\\BancoDeItens_V2\\NuGet.Config",
         "C:\\Users\\Cliente\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
@@ -1829,7 +1826,6 @@
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BancoDeItensWebApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class QuestoesController : ControllerBase
     {
         // 🛑 MUDANÇA CRÍTICA: Não injetamos mais o Repositório, mas sim a Interface do Serviço.
