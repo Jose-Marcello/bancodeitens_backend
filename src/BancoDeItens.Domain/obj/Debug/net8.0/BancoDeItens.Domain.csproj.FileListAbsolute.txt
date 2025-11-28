@@ -1,0 +1,11 @@
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\bin\Debug\net8.0\BancoDeItens.Domain.deps.json
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\bin\Debug\net8.0\BancoDeItens.Domain.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\bin\Debug\net8.0\BancoDeItens.Domain.pdb
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.AssemblyInfoInputs.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.AssemblyInfo.cs
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.csproj.CoreCompileInputs.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\refint\BancoDeItens.Domain.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\BancoDeItens.Domain.pdb
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Domain\obj\Debug\net8.0\ref\BancoDeItens.Domain.dll

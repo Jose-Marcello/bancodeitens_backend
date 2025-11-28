@@ -1,0 +1,17 @@
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Infrastructure.deps.json
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Infrastructure.runtimeconfig.json
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Infrastructure.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Infrastructure.pdb
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Domain.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\bin\Debug\net8.0\BancoDeItens.Domain.pdb
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.csproj.AssemblyReference.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.AssemblyInfoInputs.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.AssemblyInfo.cs
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeI.54D292E8.Up2Date
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\refint\BancoDeItens.Infrastructure.dll
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.pdb
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\BancoDeItens.Infrastructure.genruntimeconfig.cache
+C:\Desen\BancoDeItens_V2\src\BancoDeItens.Infrastructure\obj\Debug\net8.0\ref\BancoDeItens.Infrastructure.dll
