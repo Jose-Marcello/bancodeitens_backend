@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "BancoItens.Application/1.0.0": {
+        "dependencies": {
+          "BancoItens.Domain": "1.0.0"
+        },
+        "runtime": {
+          "BancoItens.Application.dll": {}
+        }
+      },
+      "BancoItens.Domain/1.0.0": {
+        "runtime": {
+          "BancoItens.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BancoItens.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BancoItens.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "BancoItens.Domain/1.0.0": {
+        "runtime": {
+          "BancoItens.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BancoItens.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

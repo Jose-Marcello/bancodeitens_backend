@@ -1,0 +1,15 @@
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\bin\Debug\net8.0\BancoItens.Application.deps.json
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\bin\Debug\net8.0\BancoItens.Application.dll
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\bin\Debug\net8.0\BancoItens.Application.pdb
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\bin\Debug\net8.0\BancoItens.Domain.dll
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\bin\Debug\net8.0\BancoItens.Domain.pdb
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.csproj.AssemblyReference.cache
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.AssemblyInfoInputs.cache
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.AssemblyInfo.cs
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.csproj.CoreCompileInputs.cache
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoIte.0BC37E2A.Up2Date
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.dll
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\refint\BancoItens.Application.dll
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\BancoItens.Application.pdb
+C:\Desen\BancoDeItens_old\src\BancoItens.Application\obj\Debug\net8.0\ref\BancoItens.Application.dll

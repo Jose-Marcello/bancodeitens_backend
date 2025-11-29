@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path="Dockerfile" />
+    <File Path="NuGet.config" />
+  </Folder>
+  <Project Path="../BancoDeItens_old/src/BancoItens.Api/BancoItens.Api.csproj" />
+  <Project Path="../BancoDeItens_old/src/BancoItens.Application/BancoItens.Application.csproj" />
+  <Project Path="../BancoDeItens_old/src/BancoItens.Domain/BancoItens.Domain.csproj" />
+  <Project Path="../BancoDeItens_old/src/BancoItens.Infrastructure/BancoItens.Infrastructure.csproj" />
+</Solution>
